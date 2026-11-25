@@ -60,7 +60,9 @@ public class TweakedModel implements IBakedModel {
                 adjust(o.thirdPerson, ModConfig.thirdPerson),
                 adjust(o.firstPerson, ModConfig.firstPerson),
                 o.head,
-                o.gui);
+                o.gui,
+                o.ground,
+                o.fixed);
     }
 
     private static ItemTransformVec3f adjust(ItemTransformVec3f b, ModConfig.Transform t) {
