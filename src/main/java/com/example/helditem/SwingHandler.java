@@ -7,43 +7,32 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
- * Turns the big arm swing into a small, quick flick.
- *
- * The renderer reads the player's swingProgress (0..1). Each frame we work out
- * the real progress from the swing tick counter and overwrite swingProgress with
- * a shorter, smaller curve. Vanilla's swing animation peaks at progress 0.25, so
- * we scale the peak so the visible motion is "swingAmount" times the normal size.
+ * Normal vanilla swing shape, just faster (like the swing speed option in
+ * custom-animation mods). Each frame we rescale how far through the swing we
+ * are so it finishes in "swingTicks" instead of the vanilla length.
  */
 public class SwingHandler {
-    private static final float SPEED = 1.5f; // >1 = finishes sooner
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
         if (event.phase != TickEvent.Phase.START) {
             return;
         }
-        float amount = ModConfig.swingAmount;
-        if (amount >= 0.999f) {
-            return; // vanilla
-        }
-        Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayerSP p = mc.thePlayer;
-        if (p == null) {
+        EntityPlayerSP p = Minecraft.getMinecraft().thePlayer;
+        if (p == null || !p.isSwingInProgress) {
             return;
         }
-        float out = 0.0f;
-        if (p.isSwingInProgress) {
-            float raw = (p.swingProgressInt + event.renderTickTime) / (float) swingEnd(p);
-            float q = Math.max(0.0f, Math.min(1.0f, raw * SPEED));
-            float peak = (float) Math.asin(Math.max(0.0f, amount)) / (float) Math.PI;
-            peak = peak * peak; // progress value whose vanilla motion has size "amount"
-            out = peak * (float) Math.sin(q * Math.PI);
+        int target = ModConfig.swingTicks;
+        if (target >= vanillaEnd(p)) {
+            return; // can't make it longer than the game's own swing, so leave it
         }
-        p.prevSwingProgress = out;
-        p.swingProgress = out;
+        float elapsed = Math.max(0.0f, p.swingProgressInt + event.renderTickTime);
+        float q = Math.min(1.0f, elapsed / (float) target);
+        p.prevSwingProgress = q;
+        p.swingProgress = q;
     }
 
-    private static int swingEnd(EntityPlayerSP p) {
+    private static int vanillaEnd(EntityPlayerSP p) {
         if (p.isPotionActive(Potion.digSpeed)) {
             return 6 - (1 + p.getActivePotionEffect(Potion.digSpeed).getAmplifier());
         }
