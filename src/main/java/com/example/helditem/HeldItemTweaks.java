@@ -30,6 +30,7 @@ public class HeldItemTweaks {
         MinecraftForge.EVENT_BUS.register(new ModelHandler());
         FMLCommonHandler.instance().bus().register(this);
         FMLCommonHandler.instance().bus().register(new KeyHandler());
+        FMLCommonHandler.instance().bus().register(new BlockAnimHandler());
     }
 
     @SubscribeEvent
