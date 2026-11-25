@@ -61,13 +61,51 @@ public class TweakedPerspectiveModel extends TweakedModel implements IPerspectiv
         tmp.m22 = t.scale;
         extra.mul(tmp);
 
-        Matrix4f result = new Matrix4f();
+        Matrix4f m = new Matrix4f();
         if (p.getRight() != null) {
-            result.set(p.getRight());
+            m.set(p.getRight());
         } else {
-            result.setIdentity();
+            m.setIdentity();
         }
+
+        if (type == ItemCameraTransforms.TransformType.FIRST_PERSON && isBlocking()) {
+            // Vanilla applies the block pose (B) before the item matrix (M). Re-express
+            // the offset so the sword shifts by the same amount in hand space as when
+            // it is just held:  E' = C^-1 * E * C  with  C = M^-1 * B * M
+            try {
+                Matrix4f mInv = new Matrix4f(m);
+                mInv.invert();
+                Matrix4f c = new Matrix4f(mInv);
+                c.mul(blockPose());
+                c.mul(m);
+                Matrix4f cInv = new Matrix4f(c);
+                cInv.invert();
+                Matrix4f adjusted = new Matrix4f(cInv);
+                adjusted.mul(extra);
+                adjusted.mul(c);
+                extra = adjusted;
+            } catch (RuntimeException e) {
+                // singular matrix: fall back to the plain offset
+            }
+        }
+
+        Matrix4f result = new Matrix4f(m);
         result.mul(extra);
         return Pair.of(p.getLeft(), result);
+    }
+
+    /** Vanilla 1.8.9 sword block pose (ItemRenderer.doBlockTransformations). */
+    private static Matrix4f blockPose() {
+        Matrix4f b = new Matrix4f();
+        b.setIdentity();
+        b.setTranslation(new Vector3f(-0.5f, 0.2f, 0.0f));
+        Matrix4f tmp = new Matrix4f();
+        tmp.rotY((float) Math.toRadians(30.0));
+        b.mul(tmp);
+        tmp.rotX((float) Math.toRadians(-80.0));
+        b.mul(tmp);
+        tmp.rotY((float) Math.toRadians(60.0));
+        b.mul(tmp);
+        return b;
     }
 }
