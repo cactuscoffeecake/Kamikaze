@@ -3,6 +3,7 @@ package com.example.helditem;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -92,6 +93,11 @@ public class TweakedPerspectiveModel extends TweakedModel implements IPerspectiv
         Matrix4f result = new Matrix4f(m);
         result.mul(extra);
         return Pair.of(p.getLeft(), result);
+    }
+
+    private static boolean isBlocking() {
+        Minecraft mc = Minecraft.getMinecraft();
+        return mc != null && mc.thePlayer != null && mc.thePlayer.isBlocking();
     }
 
     /** Vanilla 1.8.9 sword block pose (ItemRenderer.doBlockTransformations). */
