@@ -7,9 +7,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
- * Normal vanilla swing shape, just faster (like the swing speed option in
- * custom-animation mods). Each frame we rescale how far through the swing we
- * are so it finishes in "swingTicks" instead of the vanilla length.
+ * Controls the first-person swing with two settings:
+ *  - swingTicks: how long the swing lasts (6 = vanilla)
+ *  - swingAmount: how far the item moves (1.0 = vanilla)
+ *
+ * The renderer derives its rotation/translation from the player's swingProgress.
+ * Vanilla's main motion is sin(sqrt(p) * PI). We pick p so that this motion is a
+ * smooth bump of height "swingAmount" over the swing, instead of the full arc.
  */
 public class SwingHandler {
 
@@ -22,14 +26,24 @@ public class SwingHandler {
         if (p == null || !p.isSwingInProgress) {
             return;
         }
-        int target = ModConfig.swingTicks;
-        if (target >= vanillaEnd(p)) {
-            return; // can't make it longer than the game's own swing, so leave it
+        int vanilla = vanillaEnd(p);
+        int length = Math.min(ModConfig.swingTicks, vanilla);
+        float amount = ModConfig.swingAmount;
+        if (length >= vanilla && amount >= 0.999f) {
+            return; // fully vanilla
         }
+
         float elapsed = Math.max(0.0f, p.swingProgressInt + event.renderTickTime);
-        float q = Math.min(1.0f, elapsed / (float) target);
-        p.prevSwingProgress = q;
-        p.swingProgress = q;
+        float q = Math.min(1.0f, elapsed / (float) length);
+
+        float out = q;
+        if (amount < 0.999f) {
+            double bump = Math.max(0.0, amount) * Math.sin(q * Math.PI);
+            double x = Math.asin(Math.min(1.0, bump)) / Math.PI;
+            out = (float) (x * x);
+        }
+        p.prevSwingProgress = out;
+        p.swingProgress = out;
     }
 
     private static int vanillaEnd(EntityPlayerSP p) {

@@ -19,12 +19,17 @@ public class ModConfig {
     /** Swing length in ticks. 6 = vanilla, lower = faster. */
     public static int swingTicks = 6;
 
+    /** Swing size. 1.0 = vanilla, lower = less movement. */
+    public static float swingAmount = 1.0f;
+
     public static void sync() {
         Configuration c = HeldItemTweaks.config;
         load(c, FIRST, firstPerson);
         load(c, THIRD, thirdPerson);
         swingTicks = c.getInt("swingTicks", FIRST, 6, 1, 6,
                 "Swing speed in ticks (6 = normal, lower = faster). Normal swing shape, just quicker");
+        swingAmount = c.getFloat("swingAmount", FIRST, 0.5f, 0.0f, 1.0f,
+                "How much the item moves during a swing (1.0 = normal, lower = less movement)");
         if (c.hasChanged()) {
             c.save();
         }
