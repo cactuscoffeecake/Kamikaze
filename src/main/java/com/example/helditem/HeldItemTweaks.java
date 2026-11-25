@@ -31,6 +31,7 @@ public class HeldItemTweaks {
         FMLCommonHandler.instance().bus().register(this);
         FMLCommonHandler.instance().bus().register(new KeyHandler());
         FMLCommonHandler.instance().bus().register(new BlockAnimHandler());
+        FMLCommonHandler.instance().bus().register(new SwingHandler());
     }
 
     @SubscribeEvent

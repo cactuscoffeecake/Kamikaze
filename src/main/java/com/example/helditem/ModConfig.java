@@ -16,10 +16,15 @@ public class ModConfig {
     public static final Transform firstPerson = new Transform();
     public static final Transform thirdPerson = new Transform();
 
+    /** 1.0 = vanilla swing, lower = smaller/quicker flick */
+    public static float swingAmount = 1.0f;
+
     public static void sync() {
         Configuration c = HeldItemTweaks.config;
         load(c, FIRST, firstPerson);
         load(c, THIRD, thirdPerson);
+        swingAmount = c.getFloat("swingAmount", FIRST, 0.35f, 0.0f, 1.0f,
+                "Swing size (1.0 = normal swing, lower = smaller, quicker flick)");
         if (c.hasChanged()) {
             c.save();
         }
