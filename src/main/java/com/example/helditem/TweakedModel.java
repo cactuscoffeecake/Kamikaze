@@ -17,7 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
  * config menu apply instantly.
  */
 public class TweakedModel implements IBakedModel {
-    private final IBakedModel base;
+    protected final IBakedModel base;
 
     public TweakedModel(IBakedModel base) {
         this.base = base;
@@ -56,6 +56,9 @@ public class TweakedModel implements IBakedModel {
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
         ItemCameraTransforms o = base.getItemCameraTransforms();
+        if (isDefault(ModConfig.thirdPerson) && isDefault(ModConfig.firstPerson)) {
+            return o; // untouched vanilla transforms
+        }
         return new ItemCameraTransforms(
                 adjust(o.thirdPerson, ModConfig.thirdPerson),
                 adjust(o.firstPerson, ModConfig.firstPerson),
@@ -65,8 +68,14 @@ public class TweakedModel implements IBakedModel {
                 o.fixed);
     }
 
+    static boolean isDefault(ModConfig.Transform t) {
+        return !t.enabled || (t.scale == 1.0f
+                && t.posX == 0f && t.posY == 0f && t.posZ == 0f
+                && t.rotX == 0f && t.rotY == 0f && t.rotZ == 0f);
+    }
+
     private static ItemTransformVec3f adjust(ItemTransformVec3f b, ModConfig.Transform t) {
-        if (!t.enabled) {
+        if (isDefault(t)) {
             return b;
         }
         Vector3f rot = new Vector3f(b.rotation.x + t.rotX, b.rotation.y + t.rotY, b.rotation.z + t.rotZ);
