@@ -5,6 +5,8 @@ import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,14 +22,18 @@ public class TweakedPerspectiveModel extends TweakedModel implements IPerspectiv
         super(base);
     }
 
+    public VertexFormat getFormat() {
+        return ((IFlexibleBakedModel) base).getFormat();
+    }
+
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return base.getItemCameraTransforms();
     }
 
     @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType type) {
-        Pair<? extends IBakedModel, Matrix4f> p = ((IPerspectiveAwareModel) base).handlePerspective(type);
+    public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType type) {
+        Pair<? extends IFlexibleBakedModel, Matrix4f> p = ((IPerspectiveAwareModel) base).handlePerspective(type);
 
         ModConfig.Transform t = null;
         if (type == ItemCameraTransforms.TransformType.FIRST_PERSON) {
