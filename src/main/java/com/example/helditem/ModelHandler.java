@@ -8,6 +8,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.RegistrySimple;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ModelHandler {
@@ -24,7 +25,9 @@ public class ModelHandler {
             }
             IBakedModel model = registry.getObject(key);
             if (model != null && !(model instanceof TweakedModel)) {
-                registry.putObject(key, new TweakedModel(model));
+                registry.putObject(key, model instanceof IPerspectiveAwareModel
+                        ? new TweakedPerspectiveModel(model)
+                        : new TweakedModel(model));
             }
         }
     }
