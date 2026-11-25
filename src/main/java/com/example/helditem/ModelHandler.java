@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.IRegistry;
+import net.minecraft.util.RegistrySimple;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -15,7 +16,8 @@ public class ModelHandler {
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> registry = event.modelRegistry;
-        List<ModelResourceLocation> keys = new ArrayList<ModelResourceLocation>(registry.getKeys());
+        List<ModelResourceLocation> keys = new ArrayList<ModelResourceLocation>(
+                ((RegistrySimple<ModelResourceLocation, IBakedModel>) registry).getKeys());
         for (ModelResourceLocation key : keys) {
             if (!"inventory".equals(key.getVariant())) {
                 continue; // only item models
