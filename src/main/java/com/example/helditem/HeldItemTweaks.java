@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
         clientSideOnly = true, acceptedMinecraftVersions = "[1.8.9]",
         guiFactory = "com.example.helditem.ConfigGuiFactory")
 public class HeldItemTweaks {
-    public static final String MODID = "helditemtweaks";
-    public static final String NAME = "Held Item Tweaks";
+    public static final String MODID = "kamikaze";
+    public static final String NAME = "Kamikaze";
     public static final String VERSION = "1.0";
 
     public static Configuration config;

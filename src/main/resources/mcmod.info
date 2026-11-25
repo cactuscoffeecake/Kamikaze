@@ -1,7 +1,7 @@
 [
 {
-  "modid": "helditemtweaks",
-  "name": "Held Item Tweaks",
+  "modid": "kamikaze",
+  "name": "Kamikaze",
   "description": "Change the size, position and rotation of held items in first and third person.",
   "version": "${version}",
   "mcversion": "${mcversion}",

@@ -10,7 +10,7 @@ import net.minecraftforge.common.config.ConfigElement;
 
 public class ModGuiConfig extends GuiConfig {
     public ModGuiConfig(GuiScreen parent) {
-        super(parent, elements(), HeldItemTweaks.MODID, false, false, "Held Item Tweaks");
+        super(parent, elements(), HeldItemTweaks.MODID, false, false, "Kamikaze");
     }
 
     private static List<IConfigElement> elements() {
